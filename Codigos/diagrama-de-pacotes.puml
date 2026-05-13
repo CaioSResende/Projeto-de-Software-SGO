@@ -1,0 +1,87 @@
+@startuml diagrama-de-pacotes
+
+title Sistema de Gestão das Olimpíadas (SGO)\nDiagrama de Pacotes
+
+skinparam packageBackgroundColor #F0F4FF
+skinparam packageBorderColor #336699
+skinparam arrowColor #333333
+skinparam packageFontStyle bold
+
+package "sgo" {
+
+  package "presentation" {
+    package "controller" {
+      [CompetitionController]
+      [AtletaController]
+      [LocalController]
+      [ResultadoController]
+      [RelatorioController]
+      [AuthController]
+    }
+    package "dto" {
+      [CompetitionDTO]
+      [AtletaDTO]
+      [InscricaoDTO]
+      [ResultadoDTO]
+      [RelatorioDTO]
+    }
+  }
+
+  package "service" {
+    [CompetitionService]
+    [InscricaoService]
+    [AlocacaoService]
+    [ResultadoService]
+    [RelatorioService]
+    [AuthService]
+  }
+
+  package "model" {
+    package "entity" {
+      [Competicao]
+      [Atleta]
+      [Local]
+      [Inscricao]
+      [Resultado]
+      [Pais]
+      [RelatorioMedalhas]
+    }
+    package "enums" {
+      [MedalhaEnum]
+    }
+  }
+
+  package "repository" {
+    [CompetitionRepository]
+    [AtletaRepository]
+    [LocalRepository]
+    [InscricaoRepository]
+    [ResultadoRepository]
+    [PaisRepository]
+  }
+
+  package "config" {
+    [SecurityConfig]
+    [DatabaseConfig]
+    [CacheConfig]
+  }
+
+  package "exception" {
+    [ConflitoHorarioException]
+    [AtletaJaInscritoException]
+    [ResourceNotFoundException]
+    [GlobalExceptionHandler]
+  }
+
+}
+
+' Dependências entre pacotes
+"presentation" ..> "service"    : <<use>>
+"service"       ..> "model"     : <<use>>
+"service"       ..> "repository": <<use>>
+"repository"    ..> "model"     : <<use>>
+"service"       ..> "exception" : <<throws>>
+"presentation"  ..> "exception" : <<handles>>
+"config"        ..> "repository": <<configures>>
+
+@enduml
