@@ -143,7 +143,8 @@ Projeto-de-Software-SGO/
 
 ---
 
-## 👤 Autor
+## 👤 Autores
 
-**Caio** — Engenharia de Software, PUC Minas  
+**Caio Resende** — Engenharia de Software, PUC Minas
+**Lucas Ferreira** — Engenharia de Software, PUC Minas
 Disciplina: Projeto de Software — 2025/1
