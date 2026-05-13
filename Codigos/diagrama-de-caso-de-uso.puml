@@ -1,0 +1,67 @@
+@startuml diagrama-de-caso-de-uso
+
+title Sistema de Gestão das Olimpíadas (SGO)\nDiagrama de Caso de Uso
+
+left to right direction
+skinparam actorStyle awesome
+skinparam usecase {
+  BackgroundColor #FEFEFE
+  BorderColor #333333
+  ArrowColor #333333
+}
+skinparam actor {
+  BackgroundColor #DDEEFF
+  BorderColor #336699
+}
+
+actor "Administrador" as Admin
+actor "Atleta" as Atleta
+actor "Comitê Olímpico" as Comite
+
+rectangle "Sistema de Gestão das Olimpíadas" {
+
+  usecase "UC01 - Cadastrar Competição" as UC01
+  usecase "UC02 - Editar Competição" as UC02
+  usecase "UC03 - Listar Competições" as UC03
+  usecase "UC04 - Inscrever Atleta em Competição" as UC04
+  usecase "UC05 - Cancelar Inscrição" as UC05
+  usecase "UC06 - Consultar Inscrições" as UC06
+  usecase "UC07 - Alocar Local para Competição" as UC07
+  usecase "UC08 - Verificar Conflito de Horário" as UC08
+  usecase "UC09 - Registrar Resultado" as UC09
+  usecase "UC10 - Consultar Resultados" as UC10
+  usecase "UC11 - Gerar Relatório de Medalhas" as UC11
+  usecase "UC12 - Cadastrar Atleta" as UC12
+  usecase "UC13 - Cadastrar Local" as UC13
+
+}
+
+' Admin
+Admin --> UC01
+Admin --> UC02
+Admin --> UC03
+Admin --> UC07
+Admin --> UC09
+Admin --> UC12
+Admin --> UC13
+
+' Atleta
+Atleta --> UC04
+Atleta --> UC05
+Atleta --> UC06
+Atleta --> UC10
+
+' Comitê
+Comite --> UC11
+Comite --> UC03
+Comite --> UC10
+
+' includes / extends
+UC01 ..> UC07 : <<include>>
+UC07 ..> UC08 : <<include>>
+UC04 ..> UC06 : <<include>>
+UC09 ..> UC10 : <<include>>
+UC02 ..> UC01 : <<extend>>
+UC05 ..> UC04 : <<extend>>
+
+@enduml

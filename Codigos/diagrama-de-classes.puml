@@ -1,0 +1,169 @@
+@startuml diagrama-de-classes
+
+title Sistema de Gestão das Olimpíadas (SGO)\nDiagrama de Classes e Pacotes
+
+skinparam classBackgroundColor #FEFEFE
+skinparam classBorderColor #333333
+skinparam packageBackgroundColor #F0F4FF
+skinparam packageBorderColor #336699
+skinparam arrowColor #333333
+skinparam stereotypeCBackgroundColor #ADD8E6
+
+package "model" {
+
+  class Pais {
+    - id: Long
+    - nome: String
+    - sigla: String
+    + getPais(): Pais
+    + getNome(): String
+    + getSigla(): String
+  }
+
+  class Atleta {
+    - id: Long
+    - nome: String
+    - dataNascimento: LocalDate
+    - nacionalidade: String
+    + getId(): Long
+    + getNome(): String
+    + getPais(): Pais
+  }
+
+  class Local {
+    - id: Long
+    - nome: String
+    - capacidade: int
+    - endereco: String
+    + isDisponivel(data: LocalDate, horario: LocalTime): boolean
+    + getId(): Long
+    + getNome(): String
+  }
+
+  class Competicao {
+    - id: Long
+    - modalidade: String
+    - data: LocalDate
+    - horario: LocalTime
+    + getId(): Long
+    + getModalidade(): String
+    + getAtletasInscritos(): List<Atleta>
+    + adicionarAtleta(a: Atleta): void
+    + removerAtleta(a: Atleta): void
+  }
+
+  enum MedalhaEnum {
+    OURO
+    PRATA
+    BRONZE
+  }
+
+  class Resultado {
+    - id: Long
+    - posicao: int
+    - medalha: MedalhaEnum
+    + getId(): Long
+    + getPosicao(): int
+    + getMedalha(): MedalhaEnum
+  }
+
+  class Inscricao {
+    - id: Long
+    - dataInscricao: LocalDate
+    - paisRepresentado: Pais
+    + getId(): Long
+    + getDataInscricao(): LocalDate
+    + getPaisRepresentado(): Pais
+  }
+
+  class RelatorioMedalhas {
+    - id: Long
+    - dataGeracao: LocalDate
+    + gerar(): void
+    + getTotalOuro(p: Pais): int
+    + getTotalPrata(p: Pais): int
+    + getTotalBronze(p: Pais): int
+  }
+
+}
+
+package "service" {
+
+  class CompetitionService {
+    + cadastrarCompeticao(c: Competicao): void
+    + editarCompeticao(c: Competicao): void
+    + listarCompeticoes(): List<Competicao>
+  }
+
+  class InscricaoService {
+    + inscreverAtleta(a: Atleta, c: Competicao, p: Pais): Inscricao
+    + cancelarInscricao(i: Inscricao): void
+  }
+
+  class AlocacaoService {
+    + alocarLocal(l: Local, c: Competicao): void
+    + verificarConflito(l: Local, c: Competicao): boolean
+  }
+
+  class ResultadoService {
+    + registrarResultado(r: Resultado): void
+    + consultarResultados(c: Competicao): List<Resultado>
+  }
+
+  class RelatorioService {
+    + gerarRelatorioMedalhas(): RelatorioMedalhas
+  }
+
+}
+
+package "repository" {
+
+  interface AtletaRepository {
+    + save(a: Atleta): Atleta
+    + findById(id: Long): Atleta
+    + findAll(): List<Atleta>
+  }
+
+  interface CompetitionRepository {
+    + save(c: Competicao): Competicao
+    + findById(id: Long): Competicao
+    + findAll(): List<Competicao>
+  }
+
+  interface LocalRepository {
+    + save(l: Local): Local
+    + findById(id: Long): Local
+    + findAll(): List<Local>
+  }
+
+  interface ResultadoRepository {
+    + save(r: Resultado): Resultado
+    + findByCompeticao(c: Competicao): List<Resultado>
+  }
+
+}
+
+' Relacionamentos
+Atleta "1" --> "1" Pais : representa >
+Inscricao "1" --> "1" Atleta : inscrito >
+Inscricao "1" --> "1" Competicao : referente >
+Inscricao "1" --> "1" Pais : representando >
+Competicao "1" --> "1" Local : realizada em >
+Competicao "1" --> "*" Inscricao : possui >
+Resultado "1" --> "1" Atleta : obtido por >
+Resultado "1" --> "1" Competicao : de >
+Resultado "1" --> "1" MedalhaEnum : tipo >
+RelatorioMedalhas "*" --> "*" Resultado : consolida >
+RelatorioMedalhas "*" --> "*" Pais : agrupa por >
+
+CompetitionService ..> CompetitionRepository : usa
+CompetitionService ..> Competicao : gerencia
+InscricaoService ..> AtletaRepository : usa
+InscricaoService ..> Inscricao : cria
+AlocacaoService ..> LocalRepository : usa
+AlocacaoService ..> Competicao : aloca
+ResultadoService ..> ResultadoRepository : usa
+ResultadoService ..> Resultado : registra
+RelatorioService ..> RelatorioMedalhas : gera
+
+@enduml

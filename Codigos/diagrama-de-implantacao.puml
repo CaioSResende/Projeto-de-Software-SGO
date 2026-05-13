@@ -1,0 +1,96 @@
+@startuml diagrama-de-implantacao
+
+title Sistema de Gestão das Olimpíadas (SGO)\nDiagrama de Implantação
+
+skinparam nodeBackgroundColor #FEFEFE
+skinparam nodeBorderColor #333333
+skinparam componentBackgroundColor #EEF4FF
+skinparam componentBorderColor #336699
+skinparam databaseBackgroundColor #FFF8DC
+skinparam databaseBorderColor #B8860B
+skinparam arrowColor #333333
+skinparam cloudBackgroundColor #E8F8FF
+skinparam cloudBorderColor #0077BB
+
+' ─── Dispositivos dos Usuários ───────────────────────────
+node "Dispositivo do Administrador\n<<PC / Notebook>>" as DevAdmin {
+  component [Navegador Web\n(Chrome / Firefox)] as BrowserAdmin
+}
+
+node "Dispositivo do Atleta\n<<PC / Smartphone>>" as DevAtleta {
+  component [Navegador Web\n/ App Mobile] as BrowserAtleta
+}
+
+node "Dispositivo do Comitê\n<<PC / Notebook>>" as DevComite {
+  component [Navegador Web\n(Chrome / Firefox)] as BrowserComite
+}
+
+' ─── CDN / DNS ────────────────────────────────────────────
+cloud "CDN / DNS\n(Cloudflare)" as CDN {
+  component [DNS + TLS\nTermination] as DNS
+}
+
+' ─── Zona Pública (DMZ) ───────────────────────────────────
+node "Servidor Web / Load Balancer\n<<Ubuntu 22 LTS>>\n<<Nginx>>" as LB {
+  component [Load Balancer\n(Nginx)] as NginxLB
+  component [Frontend Build\n(React / HTML / CSS)] as FrontBuild
+}
+
+' ─── Zona de Aplicação ───────────────────────────────────
+node "Servidor de Aplicação\n<<Ubuntu 22 LTS>>\n<<Docker>>" as AppServer {
+  node "Container: SGO API\n<<Spring Boot / Node>>" as ContainerAPI {
+    component [API Gateway\n/ Router] as APIGateway
+    component [Módulo de Competições] as ModComp
+    component [Módulo de Inscrições]  as ModInsc
+    component [Módulo de Alocação]    as ModAloc
+    component [Módulo de Resultados]  as ModRes
+    component [Módulo de Relatórios]  as ModRel
+    component [Módulo de Auth\n(JWT)] as ModAuth
+  }
+}
+
+' ─── Zona de Dados ───────────────────────────────────────
+node "Servidor de Banco de Dados\n<<Ubuntu 22 LTS>>" as DBServer {
+  database "PostgreSQL\n(Primary)" as DBPrimary
+  database "PostgreSQL\n(Replica - Leitura)" as DBReplica
+}
+
+node "Servidor de Cache\n<<Ubuntu 22 LTS>>" as CacheServer {
+  database "Redis\n(Cache / Sessão)" as RedisDB
+}
+
+node "Servidor de Armazenamento\n<<S3-compatible>>" as StorageServer {
+  component [Object Storage\n(Relatórios PDF / Imagens)] as ObjStorage
+}
+
+' ─── Serviços Externos ────────────────────────────────────
+cloud "Serviços Externos (SaaS)" as ExtSvc {
+  component [SMTP\n(SendGrid)] as SMTP
+  component [SMS Gateway\n(Twilio)] as SMS
+}
+
+' ─── Monitoramento ────────────────────────────────────────
+node "Servidor de Monitoramento\n<<Ubuntu 22 LTS>>" as Monitor {
+  component [Grafana + Prometheus] as Grafana
+  component [ELK Stack\n(Logs)] as ELK
+}
+
+' ─── Conexões ─────────────────────────────────────────────
+BrowserAdmin  --> CDN   : HTTPS :443
+BrowserAtleta --> CDN   : HTTPS :443
+BrowserComite --> CDN   : HTTPS :443
+
+CDN         --> LB          : HTTPS :443
+LB          --> ContainerAPI : HTTP :8080
+
+ContainerAPI --> DBPrimary  : JDBC / TCP :5432
+DBPrimary    --> DBReplica  : Replication\n:5432
+ContainerAPI --> DBReplica  : JDBC (read)\n:5432
+ContainerAPI --> RedisDB    : TCP :6379
+ModRel       --> ObjStorage : HTTPS / S3 API
+ModInsc      --> SMTP       : SMTP :587
+ModInsc      --> SMS        : HTTPS API
+
+AppServer    --> Monitor    : métricas / logs
+
+@enduml

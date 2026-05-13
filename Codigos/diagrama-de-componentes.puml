@@ -1,0 +1,96 @@
+@startuml diagrama-de-componentes
+
+title Sistema de Gestão das Olimpíadas (SGO)\nDiagrama de Componentes
+
+skinparam componentBackgroundColor #FEFEFE
+skinparam componentBorderColor #333333
+skinparam packageBackgroundColor #F0F4FF
+skinparam packageBorderColor #336699
+skinparam arrowColor #333333
+skinparam databaseBackgroundColor #FFF8DC
+skinparam databaseBorderColor #B8860B
+
+' ─── Camada de Apresentação ───────────────────────────────
+package "Interface de Usuário (Frontend)" {
+  component [Portal Web\n(Administrador)] as WebAdmin
+  component [Portal Web\n(Atleta)] as WebAtleta
+  component [Painel Comitê\nOlímpico] as WebComite
+}
+
+' ─── API Gateway ──────────────────────────────────────────
+component [API Gateway\n/ Load Balancer] as Gateway
+
+' ─── Camada de Aplicação (Backend) ───────────────────────
+package "Backend - SGO API" {
+  component [Módulo de\nCompetições] as ModComp
+  component [Módulo de\nInscrições] as ModInsc
+  component [Módulo de\nAlocação de Locais] as ModAloc
+  component [Módulo de\nResultados] as ModRes
+  component [Módulo de\nRelatórios] as ModRel
+  component [Módulo de\nAutenticação] as ModAuth
+}
+
+' ─── Camada de Dados ──────────────────────────────────────
+package "Camada de Dados" {
+  database "Banco de Dados\nRelacional\n(PostgreSQL)" as DB
+  database "Cache\n(Redis)" as Cache
+  component [Serviço de\nArmazenamento\nde Relatórios] as StorageRel
+}
+
+' ─── Serviços Externos ────────────────────────────────────
+package "Serviços Externos" {
+  component [Serviço de\nNotificação\n(E-mail / SMS)] as NotifSvc
+  component [Serviço de\nExportação PDF] as PdfSvc
+}
+
+' ─── Interfaces (Provided / Required) ─────────────────────
+interface "ICompetição" as IComp
+interface "IInscrição"  as IInsc
+interface "IAlocação"   as IAloc
+interface "IResultado"  as IRes
+interface "IRelatório"  as IRel
+interface "IAuth"       as IAuth
+
+' ─── Conexões Frontend → Gateway ─────────────────────────
+WebAdmin  --> Gateway : HTTPS
+WebAtleta --> Gateway : HTTPS
+WebComite --> Gateway : HTTPS
+
+' ─── Gateway → Módulos ────────────────────────────────────
+Gateway --> ModAuth : valida token
+Gateway --> ModComp
+Gateway --> ModInsc
+Gateway --> ModAloc
+Gateway --> ModRes
+Gateway --> ModRel
+
+' ─── Interfaces expostas pelos módulos ───────────────────
+ModComp -- IComp
+ModInsc -- IInsc
+ModAloc -- IAloc
+ModRes  -- IRel
+ModRel  -- IRel
+
+' ─── Dependências entre módulos ──────────────────────────
+ModInsc ..> IComp  : <<use>>
+ModAloc ..> IComp  : <<use>>
+ModRes  ..> IComp  : <<use>>
+ModRes  ..> IInsc  : <<use>>
+ModRel  ..> IRes   : <<use>>
+ModRel  ..> IComp  : <<use>>
+
+' ─── Módulos → Dados ─────────────────────────────────────
+ModComp --> DB
+ModInsc --> DB
+ModAloc --> DB
+ModRes  --> DB
+ModRel  --> DB
+ModAuth --> DB
+ModRel  --> Cache
+ModRel  --> StorageRel
+
+' ─── Módulos → Serviços Externos ─────────────────────────
+ModInsc --> NotifSvc : envia confirmação
+ModRel  --> PdfSvc   : exporta relatório
+
+@enduml
