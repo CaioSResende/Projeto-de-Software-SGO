@@ -15,15 +15,15 @@ Com a chegada das Olimpíadas, o SGO é um sistema de gestão desenvolvido para 
 ## 📁 Estrutura do Repositório
 
 ```
-sgo/
+Projeto-de-Software-SGO/
 ├── README.md
-├── artefatos/
-│   ├── diagrama-de-caso-de-uso.png
-│   ├── diagrama-de-classes.png
-│   ├── diagrama-de-pacotes.png
-│   ├── diagrama-de-componentes.png
-│   └── diagrama-de-implantacao.png
-└── codigos/
+├── Artefatos/
+│   ├── diagrama de caso de uso.png
+│   ├── diagrama de classe.png
+│   ├── diagrama de pacotes.png
+│   ├── diagrama de componentes.png
+│   └── diagrama de implantação.png
+└── Codigos/
     ├── diagrama-de-caso-de-uso.puml
     ├── diagrama-de-classes.puml
     ├── diagrama-de-pacotes.puml
@@ -109,31 +109,31 @@ sgo/
 
 ### Diagrama de Caso de Uso
 
-<img width="500px" height="500px" src="https://github.com/CaioSResende/projeto-de-software/blob/main/sgo/artefatos/diagrama-de-caso-de-uso.png"/>
+<img width="500px" height="500px" src="https://raw.githubusercontent.com/CaioSResende/Projeto-de-Software-SGO/main/Artefatos/diagrama%20de%20caso%20de%20uso.png"/>
 
 ---
 
 ### Diagrama de Classes
 
-<img width="500px" height="500px" src="https://github.com/CaioSResende/projeto-de-software/blob/main/sgo/artefatos/diagrama-de-classes.png"/>
+<img width="500px" height="500px" src="https://raw.githubusercontent.com/CaioSResende/Projeto-de-Software-SGO/main/Artefatos/diagrama%20de%20classe.png"/>
 
 ---
 
 ### Diagrama de Pacotes
 
-<img width="500px" height="500px" src="https://github.com/CaioSResende/projeto-de-software/blob/main/sgo/artefatos/diagrama-de-pacotes.png"/>
+<img width="500px" height="500px" src="https://raw.githubusercontent.com/CaioSResende/Projeto-de-Software-SGO/main/Artefatos/diagrama%20de%20pacotes.png"/>
 
 ---
 
 ### Diagrama de Componentes
 
-<img width="500px" height="500px" src="https://github.com/CaioSResende/projeto-de-software/blob/main/sgo/artefatos/diagrama-de-componentes.png"/>
+<img width="500px" height="500px" src="https://raw.githubusercontent.com/CaioSResende/Projeto-de-Software-SGO/main/Artefatos/diagrama%20de%20componentes.png"/>
 
 ---
 
 ### Diagrama de Implantação
 
-<img width="500px" height="500px" src="https://github.com/CaioSResende/projeto-de-software/blob/main/sgo/artefatos/diagrama-de-implantacao.png"/>
+<img width="500px" height="500px" src="https://raw.githubusercontent.com/CaioSResende/Projeto-de-Software-SGO/main/Artefatos/diagrama%20de%20implanta%C3%A7%C3%A3o.png"/>
 
 ---
 
@@ -143,8 +143,7 @@ sgo/
 
 ---
 
-## 👤 Autores
+## 👤 Autor
 
 **Caio** — Engenharia de Software, PUC Minas  
-**Lucas José** - Engenharia de Software, Puc Minas
 Disciplina: Projeto de Software — 2025/1
